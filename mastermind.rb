@@ -20,6 +20,10 @@ class Mastermind
   def secret_code
     puts @secret_code
   end
+
+  def player_guess
+    gets.chomp.split(',')
+  end
 end
 
 class GameSession < Mastermind
