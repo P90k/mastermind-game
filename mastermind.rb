@@ -3,7 +3,7 @@
 class Mastermind
   def initialize
     @code_colors = %w[red blue yellow green black white]
-    @key_pegs = %w[x x x x]
+    @feedback = %w[x x x x]
     @secret_code = build_secret_code
   end
 
@@ -22,11 +22,27 @@ class Mastermind
   end
 
   def player_guess
-    gets.chomp.split(',')
+    gets.chomp.split(' ')
+  end
+
+  def feedback(user_guess)
+    user_guess.each_with_index do |element, index|
+      if @secret_code.include?(element) && @secret_code.index(element) == index
+        @feedback[index] = 'black'
+      elsif @secret_code.include?(element)
+        @feedback[index] = 'white'
+      end
+    end
+    @feedback
   end
 end
 
 class GameSession < Mastermind
+  def initialize
+    @game_session = super
+  end
 end
+
 mastermind = Mastermind.new
-mastermind.secret_code
+p mastermind.secret_code
+p mastermind.feedback(['red', 'green', 'blue', 'yellow'])
