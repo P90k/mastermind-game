@@ -31,8 +31,6 @@ class Mastermind
         @feedback[index] = 'black'
       elsif @secret_code.include?(element)
         @feedback[index] = 'white'
-      else
-        next
       end
     end
     @feedback
