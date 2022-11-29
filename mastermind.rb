@@ -11,7 +11,7 @@ class Mastermind
     secret_code = []
 
     until secret_code.length == 4
-      random_color = @code_colors[rand(4)]
+      random_color = @code_colors[rand(6)]
       secret_code.include?(random_color) ? next : secret_code.push(random_color)
     end
     secret_code
@@ -31,6 +31,8 @@ class Mastermind
         @feedback[index] = 'black'
       elsif @secret_code.include?(element)
         @feedback[index] = 'white'
+      else
+        next
       end
     end
     @feedback
@@ -45,4 +47,4 @@ end
 
 mastermind = Mastermind.new
 p mastermind.secret_code
-p mastermind.feedback(['red', 'green', 'blue', 'yellow'])
+p mastermind.feedback(%w[red green yellow blue])
