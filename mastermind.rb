@@ -3,7 +3,7 @@
 class Mastermind
   def initialize
     @code_colors = %w[red blue yellow green black white]
-    @feedback = %w[- - - -]
+    @feedback = %w[secret secret secret secret]
     @secret_code = build_secret_code
   end
 
@@ -17,12 +17,8 @@ class Mastermind
     secret_code
   end
 
-  def secret_code
-    p @secret_code
-  end
-
   def player_guess
-    p 'Place your guess'
+    puts "\nPlace your guess\n\n"
     gets.chomp.split(' ')
   end
 
@@ -33,14 +29,10 @@ class Mastermind
                          elsif @secret_code.include?(element)
                            'white'
                          else
-                           '-'
+                           'secret'
                          end
     end
     @feedback
-  end
-
-  def determine_end(count)
-    count + 1 > 12
   end
 end
 
@@ -49,23 +41,34 @@ class GameSession < Mastermind
     @game_session = super
   end
 
-  def game_session
-    rounds = 0
-    p 'Welcome to MasterMind, can you crack the code?'
-    puts ''
-    until determine_end(rounds)
+  def welcome_message
+    "\nWelcome to MasterMind, can you crack the code?"
+  end
+
+  def winners_message
+    "\nCongratulations, you cracked the code!\n\n"
+  end
+
+  def losers_message
+    "\nSorry you didn't win this time, better luck next time bro!\n\n"
+  end
+
+  def game_loop
+    1.upto(12) do
       guess = player_guess
-      puts "Your guess: #{guess}"
-      puts ''
-      puts "Feedback on your guess: #{feedback(guess)}"
-      rounds += 1
-      if feedback(guess).count('black') == 4
-        p 'Congratulations, you cracked the code!'
-        break
-      end
+      puts "\nYour guess:     #{guess.join('  |  ')}"
+      return winners_message if feedback(guess).count('black') == 4
+
+      puts "\nFeedback:    #{feedback(guess).join('  |  ')}\n\n"
     end
+    losers_message
+  end
+
+  def game_flow
+    puts welcome_message
+    puts game_loop
   end
 end
 
 gamesession = GameSession.new
-gamesession.game_session
+gamesession.game_flow
