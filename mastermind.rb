@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Mastermind
+  attr_accessor :secret_code
   def initialize
     @code_colors = %w[red blue yellow green black white]
     @feedback = %w[secret secret secret secret]
@@ -22,10 +23,6 @@ class Mastermind
     puts "Colors to choose from: red, blue, yellow, green, black, white\n\n"
     @secret_code = gets.chomp.split(' ')
     @secret_code
-  end
-
-  def secret_code
-    p @secret_code
   end
 
   def player_guess
@@ -86,6 +83,5 @@ class GameSession < Mastermind
 end
 
 gamesession = GameSession.new
-mastermind = Mastermind.new
-mastermind.change_secret_code
-p mastermind
+gamesession.change_secret_code
+p gamesession.secret_code
