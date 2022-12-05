@@ -4,10 +4,10 @@ class Mastermind
   def initialize
     @code_colors = %w[red blue yellow green black white]
     @feedback = %w[secret secret secret secret]
-    @secret_code = build_secret_code
+    @secret_code = generate_secret_code
   end
 
-  def build_secret_code
+  def generate_secret_code
     secret_code = []
 
     until secret_code.length == 4
@@ -17,13 +17,24 @@ class Mastermind
     secret_code
   end
 
+  def change_secret_code
+    puts 'Choose your secret code, four colors with a space between each color.'
+    puts "Colors to choose from: red, blue, yellow, green, black, white\n\n"
+    @secret_code = gets.chomp.split(' ')
+    @secret_code
+  end
+
+  def secret_code
+    p @secret_code
+  end
+
   def player_guess
     puts "\nPlace your guess\n\n"
     gets.chomp.split(' ')
   end
 
-  def feedback(user_guess)
-    user_guess.each_with_index do |element, index|
+  def feedback(guess)
+    guess.each_with_index do |element, index|
       @feedback[index] = if @secret_code.include?(element) && @secret_code.index(element) == index
                            'black'
                          elsif @secret_code.include?(element)
@@ -42,7 +53,7 @@ class GameSession < Mastermind
   end
 
   def welcome_message
-    "\nWelcome to MasterMind, can you crack the code?"
+    "\nWelcome to MasterMind!"
   end
 
   def winners_message
@@ -53,7 +64,7 @@ class GameSession < Mastermind
     "\nSorry you didn't win this time, better luck next time bro!\n\n"
   end
 
-  def game_loop
+  def gameflow_codebreaker
     1.upto(12) do
       guess = player_guess
       puts "\nYour guess:     #{guess.join('  |  ')}"
@@ -64,11 +75,17 @@ class GameSession < Mastermind
     losers_message
   end
 
-  def game_flow
+  def game_start
     puts welcome_message
-    puts game_loop
+    puts "\nDo you want to be codemaker or codebreaker?"
+    choice = gets.chomp
+    return unless choice.downcase == 'codebreaker'
+
+    puts gameflow_codebreaker
   end
 end
 
 gamesession = GameSession.new
-gamesession.game_flow
+mastermind = Mastermind.new
+mastermind.change_secret_code
+p mastermind
