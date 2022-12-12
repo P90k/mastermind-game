@@ -2,13 +2,16 @@
 
 class Mastermind
   attr_accessor :secret_code
+
   def initialize
     @code_colors = %w[red blue yellow green black white]
     @feedback = %w[secret secret secret secret]
-    @secret_code = generate_secret_code
+    @secret_code = generate_code
   end
 
-  def generate_secret_code
+  # Methods that relates to gameflow_codebreaker
+
+  def generate_code
     secret_code = []
 
     until secret_code.length == 4
@@ -29,18 +32,25 @@ class Mastermind
     puts "\nPlace your guess\n\n"
     gets.chomp.split(' ')
   end
-
+  
   def feedback(guess)
     guess.each_with_index do |element, index|
       @feedback[index] = if @secret_code.include?(element) && @secret_code.index(element) == index
-                           'black'
-                         elsif @secret_code.include?(element)
-                           'white'
-                         else
-                           'secret'
-                         end
+        'black'
+      elsif @secret_code.include?(element)
+        'white'
+      else
+        'secret'
+      end
     end
     @feedback
+  end
+
+  # Methods that relate to gameflow_codemaker
+  
+  def computer_guess(feedback = [],)
+    return generate_code if feedback.length == 0
+    feedback.map
   end
 end
 
@@ -72,6 +82,15 @@ class GameSession < Mastermind
     losers_message
   end
 
+  def gameflow_codemaker
+    upto(12) do
+      guess = computer_guess
+      p guess
+      puts 'Enter feedback'
+      @feedback = gets.chomp
+    end
+  end
+
   def game_start
     puts welcome_message
     puts "\nDo you want to be codemaker or codebreaker?"
@@ -83,5 +102,3 @@ class GameSession < Mastermind
 end
 
 gamesession = GameSession.new
-gamesession.change_secret_code
-p gamesession.secret_code
