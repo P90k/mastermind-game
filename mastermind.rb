@@ -32,25 +32,29 @@ class Mastermind
     puts "\nPlace your guess\n\n"
     gets.chomp.split(' ')
   end
-  
+
   def feedback(guess)
     guess.each_with_index do |element, index|
       @feedback[index] = if @secret_code.include?(element) && @secret_code.index(element) == index
-        'black'
-      elsif @secret_code.include?(element)
-        'white'
-      else
-        'secret'
-      end
+                           'black'
+                         elsif @secret_code.include?(element)
+                           'white'
+                         else
+                           'secret'
+                         end
     end
     @feedback
   end
 
   # Methods that relate to gameflow_codemaker
-  
-  def computer_guess(feedback = [],)
-    return generate_code if feedback.length == 0
-    feedback.map
+
+  def computer_guess(feedback = [], previous_guess = [])
+    return generate_code if previous_guess.length.zero? && feedback.length.zero?
+
+    feedback.each_with_index do |element, index|
+      previous_guess[index] = @code_colors[rand(6)] if %w[x white].include?(element)
+    end
+    previous_guess
   end
 end
 
@@ -100,5 +104,3 @@ class GameSession < Mastermind
     puts gameflow_codebreaker
   end
 end
-
-gamesession = GameSession.new
