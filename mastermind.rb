@@ -9,7 +9,7 @@ class Mastermind
     @secret_code = generate_code
   end
 
-  # Methods that relates to gameflow_codebreaker
+  # Methods that relates to game mode codebreaker
 
   def generate_code
     secret_code = []
@@ -21,7 +21,7 @@ class Mastermind
     secret_code
   end
 
-  def change_secret_code
+  def set_secret_code
     puts 'Choose your secret code, four colors with a space between each color.'
     puts "Colors to choose from: red, blue, yellow, green, black, white\n\n"
     @secret_code = gets.chomp.split(' ')
@@ -46,21 +46,41 @@ class Mastermind
     @feedback
   end
 
-  # Methods that relate to gameflow_codemaker
+  # Methods that relate to game mode codemaker
 
   def computer_guess(feedback = [], previous_guess = [])
     return generate_code if previous_guess.length.zero? && feedback.length.zero?
 
+    @possible_colors = [] # we need to store white colors somewhere.
+
     feedback.each_with_index do |element, index|
-      previous_guess[index] = @code_colors[rand(6)] if %w[x white].include?(element)
+      if element == 'white'
+        if @possible_colors.empty?
+          @possible_colors.push(previous_guess[index])
+          previous_guess[index] = @code_colors.sample
+        else
+          previous_guess[index] = @possible_colors[0]
+          @possible_colors.delete_at(0)
+        end
+      elsif element == 'x'
+        previous_guess[index] = if @possible_colors.empty?
+                                  @code_colors.sample
+                                else
+                                  @possible_colors[0]
+                                  @possible_colors.delete_at(0)
+                                end
+      else # element == 'black'
+        @code_colors.delete(element) # assuming the rule is to only use one color per slot.
+      end
     end
-    previous_guess
+    previous_guess 
   end
 end
 
 class GameSession < Mastermind
   def initialize
     @game_session = super
+    @feedback = []
   end
 
   def welcome_message
@@ -68,7 +88,7 @@ class GameSession < Mastermind
   end
 
   def winners_message
-    "\nCongratulations, you cracked the code!\n\n"
+    puts "\nCongratulations, you cracked the code!\n\n"
   end
 
   def losers_message
@@ -87,20 +107,27 @@ class GameSession < Mastermind
   end
 
   def gameflow_codemaker
-    upto(12) do
-      guess = computer_guess
+    set_secret_code
+    feedback = []
+    guess = []
+    1.upto(12) do
+      guess = computer_guess(feedback, guess)
       p guess
       puts 'Enter feedback'
-      @feedback = gets.chomp
+      feedback = gets.chomp.split(' ')
+      return winners_message if feedback.count('black') == 4
     end
+    losers_message
   end
 
   def game_start
     puts welcome_message
     puts "\nDo you want to be codemaker or codebreaker?"
     choice = gets.chomp
-    return unless choice.downcase == 'codebreaker'
+    return gameflow_codemaker unless choice.downcase == 'codebreaker'
 
-    puts gameflow_codebreaker
+    gameflow_codebreaker
   end
 end
+
+GameSession.new.gameflow_codemaker
