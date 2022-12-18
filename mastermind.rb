@@ -8,6 +8,8 @@ class Mastermind
     @code_colors = %w[red blue yellow green black white]
     @feedback = %w[secret secret secret secret]
     @secret_code = generate_code
+    @white_keypegs = []
+    @black_keypegs = %w[x x x x]
   end
 
   # Methods that relates to game mode codebreaker
@@ -51,11 +53,12 @@ class Mastermind
 
   def computer_guess(feedback = [], previous_guess = [])
     return generate_code if previous_guess.length.zero? && feedback.length.zero?
-    @white_keypegs = []
     previous_guess.each {|color| @code_colors.delete(color)}
     feedback.each_with_index do |key_peg, index|
       previous_guess[index] = @code_colors.sample if key_peg == 'x'
+      @black_keypegs[index] = previous_guess[index] if key_peg == 'black'
     end
+    return @black_keypegs if @black_keypegs.count('x') == 0
     previous_guess.shuffle
   end
 
