@@ -1,3 +1,4 @@
+
 # frozen_string_literal: true
 
 class Mastermind
@@ -50,30 +51,20 @@ class Mastermind
 
   def computer_guess(feedback = [], previous_guess = [])
     return generate_code if previous_guess.length.zero? && feedback.length.zero?
-
-    @possible_colors = [] # we need to store white colors somewhere.
-
-    feedback.each_with_index do |element, index|
-      if element == 'white'
-        if @possible_colors.empty?
-          @possible_colors.push(previous_guess[index])
-          previous_guess[index] = @code_colors.sample
-        else
-          previous_guess[index] = @possible_colors[0]
-          @possible_colors.delete_at(0)
-        end
-      elsif element == 'x'
-        previous_guess[index] = if @possible_colors.empty?
-                                  @code_colors.sample
-                                else
-                                  @possible_colors[0]
-                                  @possible_colors.delete_at(0)
-                                end
-      else # element == 'black'
-        @code_colors.delete(element) # assuming the rule is to only use one color per slot.
-      end
+    @white_keypegs = []
+    previous_guess.each {|color| @code_colors.delete(color)}
+    feedback.each_with_index do |key_peg, index|
+      previous_guess[index] = @code_colors.sample if key_peg == 'x'
     end
-    previous_guess 
+    previous_guess.shuffle
+  end
+
+  def generate_color(array_colors, color) 
+    new_color = array_colors.sample
+    while new_color == color
+      new_color = array_colors.sample
+    end
+    new_color
   end
 end
 
